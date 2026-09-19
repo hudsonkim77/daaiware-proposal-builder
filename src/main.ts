@@ -5,6 +5,7 @@ import { THRESHOLDS } from "./data/config";
 import { build, selfCheck, toHtml, type HumanInput, type Section } from "./lib/proposal";
 import { funnelSvg, gapSvg, trendSvg } from "./lib/charts";
 import type { Evidence, ProposalData, Topic } from "./data/types";
+import { WEEK9_NOTES_HTML } from "./content/week9notes";
 
 const data = rawData as unknown as ProposalData;
 const topics: Topic[] = data.topics;
@@ -87,8 +88,21 @@ function render() {
 
   app.innerHTML = `
     <div class="wrap">
-      <h1>제안서</h1>
-      <p class="caption">리포트가 아니라 결재 문서입니다 — 계산 과정 없이, 승인/조건부 승인/보류를 요청하는 것으로 끝납니다.</p>
+      <div class="page-head">
+        <div>
+          <h1>제안서</h1>
+          <p class="caption">리포트가 아니라 결재 문서입니다 — 계산 과정 없이, 승인/조건부 승인/보류를 요청하는 것으로 끝납니다.</p>
+        </div>
+        <button id="week9-btn" class="ghost-btn" type="button">9주차 적용 포인트</button>
+      </div>
+
+      <dialog id="week9-modal">
+        <div class="modal-head">
+          <h2>9주차 적용 포인트</h2>
+          <button id="week9-close" class="icon-btn" type="button" aria-label="닫기">✕</button>
+        </div>
+        <div class="modal-body">${WEEK9_NOTES_HTML}</div>
+      </dialog>
 
       <label class="field-label" for="topic-select">주제</label>
       <select id="topic-select">
@@ -108,6 +122,13 @@ function render() {
   select.addEventListener("change", () => {
     selectedIndex = Number(select.value);
     render();
+  });
+
+  const modal = app.querySelector<HTMLDialogElement>("#week9-modal")!;
+  app.querySelector<HTMLButtonElement>("#week9-btn")!.addEventListener("click", () => modal.showModal());
+  app.querySelector<HTMLButtonElement>("#week9-close")!.addEventListener("click", () => modal.close());
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) modal.close(); // 배경 클릭으로도 닫힘
   });
 
   if (selectedIndex === -1) return;

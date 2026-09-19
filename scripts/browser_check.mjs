@@ -67,6 +67,20 @@ const warnText = await page.locator("#detail .warn").first().innerText();
 assert.ok(warnText.includes("기각"), `expected rejection warning, got: ${warnText}`);
 console.log("rejected-topic path OK");
 
+// "9주차 적용 포인트" modal opens and closes
+const modal = page.locator("#week9-modal");
+assert.strictEqual(await modal.isVisible(), false, "modal should be closed initially");
+await page.click("#week9-btn");
+await page.waitForTimeout(50);
+assert.strictEqual(await modal.isVisible(), true, "modal should open after clicking button");
+const modalText = await modal.locator(".modal-body").innerText();
+assert.ok(modalText.includes("Day3"), "modal should mention Day3");
+console.log("9주차 modal opens with expected content");
+await page.click("#week9-close");
+await page.waitForTimeout(50);
+assert.strictEqual(await modal.isVisible(), false, "modal should close after clicking X");
+console.log("9주차 modal closes via X button");
+
 assert.strictEqual(errors.length, 0, `console/page errors found: ${JSON.stringify(errors)}`);
 console.log("NO CONSOLE/PAGE ERRORS");
 
